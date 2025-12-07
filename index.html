@@ -3,59 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tholkappiyam AI: Advanced Prototype</title>
-    <link rel="stylesheet" href="style.css">
+    <title>தொல்காப்பியம் AI - ஆய்வுக்கருவி</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Madurai:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Hind Madurai', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            width: 100%;
+            max-width: 900px;
+            margin: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--secondary);
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 30px;
+            overflow: hidden;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+            font-family: 'Hind Madurai', sans-serif;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        /* Result Styles */
+        .result-container {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .status-valid { background-color: #d4efdf; color: var(--success); }
+        .status-invalid { background-color: #fadbd8; color: var(--error); }
+
+        .proof-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .proof-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .proof-item:last-child { border-bottom: none; }
+
+        .proof-icon {
+            min-width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .icon-check { background-color: var(--success); }
+        .icon-cross { background-color: var(--error); }
+
+        .proof-content h4 { margin: 0 0 5px 0; color: var(--secondary); font-size: 1.1rem; }
+        .proof-content p { margin: 0; color: #555; font-size: 0.95rem; line-height: 1.5; }
+        .rule-ref { display: block; margin-top: 5px; font-size: 0.85rem; color: #888; font-style: italic; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
 
-<header>
-    <h1>தொல்காப்பியம் AI</h1>
-    <p>பழந்தமிழ் இலக்கண & ஒலியியல் ஆய்வுக்கருவி</p>
-</header>
+<div class="main-wrapper">
+    <header>
+        <h1>தொல்காப்பியம் AI</h1>
+        <p>பழந்தமிழ் இலக்கணச் சரிபார்ப்புக் கருவி</p>
+    </header>
 
-<div class="container">
-    <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('grammar')">இலக்கணத் திருத்தி</button>
-        <button class="tab-btn" onclick="openTab('pronunciation')">உச்சரிப்புப் பயிற்சியாளர்</button>
-    </div>
-
-    <div id="grammar" class="content active">
-        <div class="input-group">
-            <label>தமிழ்ச் சொல்லை உள்ளிடுக:</label>
-            <input type="text" id="wordInput" placeholder="எ.கா: வுட்கை, கல்மம், நன்றி...">
+    <div class="card">
+        <div class="input-section">
+            <input type="text" id="wordInput" placeholder="தமிழ்ச் சொல்லை உள்ளிடுக (எ.கா: கக்கை, வுட்கை)...">
             <button onclick="analyzeWord()">சோதிக்கவும்</button>
         </div>
-        
-        <div id="grammarResult" class="result-box hidden">
-            </div>
-    </div>
 
-    <div id="pronunciation" class="content">
-        <div class="input-group">
-            <label>கடினமான ஒலியைத் தேர்ந்தெடுக்கவும்:</label>
-            <select id="phonemeSelect" onchange="loadPronunciation()">
-                <option value="">-- தேர்ந்தெடு --</option>
-                <option value="zh">ழகரம் (ழ்)</option>
-                <option value="L">ளகரம் (ள்)</option>
-                <option value="R">றகரம் (ற்)</option>
-                <option value="n_group">னகர/ணகர வேறுபாடு</option>
-            </select>
+        <div id="resultBox" class="result-container">
+            <div id="statusBadge" class="status-badge"></div>
+            <ul id="proofList" class="proof-list">
+                </ul>
         </div>
-
-        <div id="pronunciationResult" class="result-box hidden">
-            </div>
     </div>
-</div>
 
-<footer>
-    <p>MIT License | Developed for RDI Scheme Proposal</p>
-</footer>
+    <footer>
+        &copy; 2025 Tholkappiyam AI Research | Developed for RDI Scheme
+    </footer>
+</div>
 
 <script src="rules/mozhimuthal.js"></script>
 <script src="rules/mozhiyiruthi.js"></script>
 <script src="rules/meimayakkam.js"></script>
-<script src="rules/pirappiyal.js"></script>
-<script src="app.js"></script>
+
+<script>
+    // --- MAIN APPLICATION LOGIC (app.js Integrated) ---
+
+    function analyzeWord() {
+        const word = document.getElementById('wordInput').value.trim();
+        const resultBox = document.getElementById('resultBox');
+        const statusBadge = document.getElementById('statusBadge');
+        const proofList = document.getElementById('proofList');
+
+        if (!word) return;
+
+        // Clear previous results
+        proofList.innerHTML = '';
+        resultBox.style.display = 'block';
+
+        let isOverallValid = true;
+        let proofs = [];
+
+        // 1. மொழிமுதல் சோதனை
+        const startCheck = MozhimuthalRules.check(word);
+        proofs.push(startCheck);
+        if (!startCheck.isValid) isOverallValid = false;
+
+        // 2. மெய்ம்மயக்கச் சோதனை
+        const midCheck = MeimayakkamRules.check(word);
+        proofs.push(midCheck);
+        if (!midCheck.isValid) isOverallValid = false;
+
+        // 3. மொழியிறுதி சோதனை
+        const endCheck = MozhiyiruthiRules.check(word);
+        proofs.push(endCheck);
+        if (!endCheck.isValid) isOverallValid = false;
+
+        // Update UI
+        if (isOverallValid) {
+            statusBadge.className = 'status-badge status-valid';
+            statusBadge.innerText = '✅ சரியான சொல் (Valid)';
+        } else {
+            statusBadge.className = 'status-badge status-invalid';
+            statusBadge.innerText = '❌ பிழையான சொல் (Invalid)';
+        }
+
+        // Generate Detailed Proof List
+        proofs.forEach(proof => {
+            const li = document.createElement('li');
+            li.className = 'proof-item';
+            
+            const icon = proof.isValid ? '✓' : '✖';
+            const iconClass = proof.isValid ? 'icon-check' : 'icon-cross';
+            const title = proof.title;
+            const desc = proof.description; // Now includes the specific rule reason
+            
+            li.innerHTML = `
+                <div class="proof-icon ${iconClass}">${icon}</div>
+                <div class="proof-content">
+                    <h4>${title}</h4>
+                    <p>${desc}</p>
+                </div>
+            `;
+            proofList.appendChild(li);
+        });
+    }
+</script>
 
 </body>
 </html>
