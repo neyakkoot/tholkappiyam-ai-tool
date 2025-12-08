@@ -1,6 +1,294 @@
-<script>
-    // --- MAIN APPLICATION LOGIC (app.js Integrated) ---
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>தொல்காப்பியம் AI - ஆய்வுக்கருவி</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Madurai:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+        }
 
+        body {
+            font-family: 'Hind Madurai', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            width: 100%;
+            max-width: 900px;
+            margin: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--secondary);
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 30px;
+            overflow: hidden;
+        }
+
+        /* Tab Navigation Buttons */
+        .tab-nav {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: var(--bg);
+            color: var(--secondary);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:first-child { border-radius: 15px 0 0 0; }
+        .tab-btn:last-child { border-radius: 0 15px 0 0; }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Input Section */
+        .input-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"], select {
+            flex: 1;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+            font-family: 'Hind Madurai', sans-serif;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        button.action-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button.action-btn:hover { background-color: #357abd; }
+
+        /* Result Styles */
+        .result-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .status-valid { background-color: #d4efdf; color: var(--success); }
+        .status-invalid { background-color: #fadbd8; color: var(--error); }
+
+        .proof-list { list-style: none; padding: 0; margin: 0; }
+
+        .proof-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .proof-item:last-child { border-bottom: none; }
+
+        .proof-icon {
+            min-width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .icon-check { background-color: var(--success); }
+        .icon-cross { background-color: var(--error); }
+
+        .proof-content h4 { margin: 0 0 5px 0; color: var(--secondary); font-size: 1.1rem; }
+        .proof-content p { margin: 0; color: #555; font-size: 0.95rem; line-height: 1.5; }
+
+        /* Pronunciation Specific Styles */
+        .pronunciation-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .letter-display {
+            font-size: 5rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .diagram-container {
+            width: 200px;
+            height: 100px;
+            margin: 20px 0;
+            padding: 10px;
+            background: #fff;
+        }
+
+        .tongue-diagram { width: 100%; height: 100%; }
+
+        .sutra-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--secondary);
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        .sutra-title { color: var(--secondary); font-weight: bold; font-size: 0.9rem; }
+        .sutra-text { font-style: italic; color: #555; margin-top: 5px; }
+        .desc-text { margin-top: 15px; line-height: 1.6; color: #333; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <header>
+        <h1>தொல்காப்பியம் AI</h1>
+        <p>பழந்தமிழ் இலக்கணச் சரிபார்ப்புக் கருவி</p>
+    </header>
+
+    <div class="card" style="padding:0;">
+        <div class="tab-nav">
+            <button onclick="openTab('grammar')" class="tab-btn active" id="btn-grammar">இலக்கணத் திருத்தி</button>
+            <button onclick="openTab('pronunciation')" class="tab-btn" id="btn-pronunciation">உச்சரிப்புப் பயிற்சியாளர்</button>
+        </div>
+
+        <div style="padding: 30px;">
+            <div id="grammar" class="content-section">
+                <div class="input-section">
+                    <input type="text" id="wordInput" placeholder="தமிழ்ச் சொல்லை உள்ளிடுக (எ.கா: கக்கை, வுட்கை)...">
+                    <button onclick="analyzeWord()" class="action-btn">சோதிக்கவும்</button>
+                </div>
+
+                <div id="resultBox" class="result-container">
+                    <div id="statusBadge" class="status-badge"></div>
+                    <ul id="proofList" class="proof-list"></ul>
+                </div>
+            </div>
+
+            <div id="pronunciation" class="content-section" style="display:none;">
+                <div class="input-section" style="flex-direction: column;">
+                    <label style="font-weight:bold; color:var(--secondary); margin-bottom:10px;">கடினமான ஒலியைத் தேர்ந்தெடுக்கவும்:</label>
+                    <select id="phonemeSelect" onchange="loadPronunciation()" style="padding:15px; font-size:16px; border-radius:8px; border:2px solid #e0e0e0;">
+                        <option value="">-- ஒலியைத் தேர்ந்தெடுக்கவும் --</option>
+                        <option value="zh">ழகரம் (ழ்) - Zh</option>
+                        <option value="L">ளகரம் (ள்) - L</option>
+                        <option value="R">றகரம் (ற்) - R</option>
+                        <option value="n_group">ணகர / னகர வேறுபாடு</option>
+                    </select>
+                </div>
+
+                <div id="tutorBox" class="result-container" style="text-align:center;">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Tholkappiyam AI Research | Developed for RDI Scheme
+    </footer>
+</div>
+
+<script src="rules/mozhimuthal.js"></script>
+<script src="rules/mozhiyiruthi.js"></script>
+<script src="rules/meimayakkam.js"></script>
+<script src="rules/pirappiyal.js"></script>
+
+<script>
+    // --- TAB SWITCHING LOGIC ---
+    function openTab(tabName) {
+        // Hide all contents
+        document.getElementById('grammar').style.display = 'none';
+        document.getElementById('pronunciation').style.display = 'none';
+        
+        // Remove active class from buttons
+        document.getElementById('btn-grammar').classList.remove('active');
+        document.getElementById('btn-pronunciation').classList.remove('active');
+
+        // Show specific tab and activate button
+        document.getElementById(tabName).style.display = 'block';
+        document.getElementById('btn-' + tabName).classList.add('active');
+    }
+
+    // --- MAIN GRAMMAR CHECKER LOGIC ---
     function analyzeWord() {
         const word = document.getElementById('wordInput').value.trim();
         const resultBox = document.getElementById('resultBox');
@@ -18,7 +306,6 @@
 
         // 1. மொழிமுதல் சோதனை
         let startCheck = MozhimuthalRules.check(word);
-        // Fallback: title இல்லையென்றால் நாமே அமைப்பது
         if (!startCheck.title) startCheck.title = "மொழிமுதல் ஆய்வு";
         if (!startCheck.description) startCheck.description = startCheck.reason || (startCheck.isValid ? "விதிக்கு உட்பட்டது." : "விதிமீறல் கண்டறியப்பட்டது.");
         proofs.push(startCheck);
@@ -65,4 +352,37 @@
             proofList.appendChild(li);
         });
     }
+
+    // --- PRONUNCIATION TUTOR LOGIC ---
+    function loadPronunciation() {
+        const key = document.getElementById('phonemeSelect').value;
+        const box = document.getElementById('tutorBox');
+        
+        if (!key || !PirappiyalData[key]) {
+            box.style.display = 'none';
+            return;
+        }
+
+        const data = PirappiyalData[key];
+        box.style.display = 'block';
+
+        box.innerHTML = `
+            <div class="pronunciation-card">
+                <div class="letter-display">${data.char}</div>
+                <div class="diagram-container">
+                    ${data.svg}
+                </div>
+                <h3>${data.name}</h3>
+                <div class="desc-text">${data.desc}</div>
+                
+                <div class="sutra-box">
+                    <div class="sutra-title">தொல்காப்பிய விதி (AI Logic):</div>
+                    <div class="sutra-text">"${data.sutra}"</div>
+                </div>
+            </div>
+        `;
+    }
 </script>
+
+</body>
+</html>
