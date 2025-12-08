@@ -3,385 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>தொல்காப்பியம் AI - ஆய்வுக்கருவி</title>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Madurai:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>தொல்காப்பியம் - பிறப்பியல் காட்சி</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4a90e2;
-            --secondary: #2c3e50;
-            --success: #27ae60;
-            --error: #e74c3c;
-            --bg: #f4f7f6;
+            --primary: #c0392b; /* Red used for highlighting organs */
+            --bg-color: #f4f6f7;
+            --text-color: #2c3e50;
             --card-bg: #ffffff;
         }
 
         body {
-            font-family: 'Hind Madurai', sans-serif;
-            background-color: var(--bg);
+            font-family: 'Noto Sans Tamil', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        .main-wrapper {
-            width: 100%;
-            max-width: 900px;
-            margin: 40px 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        header h1 {
-            color: var(--secondary);
-            font-size: 2.5rem;
-            margin: 0;
-        }
-
-        header p {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            padding: 30px;
-            overflow: hidden;
-        }
-
-        /* Tab Navigation Buttons */
-        .tab-nav {
-            display: flex;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 15px;
-            background: var(--bg);
-            color: var(--secondary);
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .tab-btn:first-child { border-radius: 15px 0 0 0; }
-        .tab-btn:last-child { border-radius: 0 15px 0 0; }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Input Section */
-        .input-section {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        input[type="text"], select {
-            flex: 1;
-            padding: 15px;
-            font-size: 18px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            transition: border-color 0.3s;
-            font-family: 'Hind Madurai', sans-serif;
-        }
-
-        input[type="text"]:focus, select:focus {
-            border-color: var(--primary);
-            outline: none;
-        }
-
-        button.action-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button.action-btn:hover { background-color: #357abd; }
-
-        /* Result Styles */
-        .result-container {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-
-        .status-valid { background-color: #d4efdf; color: var(--success); }
-        .status-invalid { background-color: #fadbd8; color: var(--error); }
-
-        .proof-list { list-style: none; padding: 0; margin: 0; }
-
-        .proof-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .proof-item:last-child { border-bottom: none; }
-
-        .proof-icon {
-            min-width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .icon-check { background-color: var(--success); }
-        .icon-cross { background-color: var(--error); }
-
-        .proof-content h4 { margin: 0 0 5px 0; color: var(--secondary); font-size: 1.1rem; }
-        .proof-content p { margin: 0; color: #555; font-size: 0.95rem; line-height: 1.5; }
-
-        /* Pronunciation Specific Styles */
-        .pronunciation-card {
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .letter-display {
-            font-size: 5rem;
-            color: var(--primary);
-            font-weight: bold;
-            margin: 10px 0;
+            min-height: 100vh;
         }
 
-        .diagram-container {
-            width: 200px;
-            height: 100px;
-            margin: 20px 0;
-            padding: 10px;
-            background: #fff;
-        }
-
-        .tongue-diagram { width: 100%; height: 100%; }
-
-        .sutra-box {
-            background-color: #f8f9fa;
-            border-left: 4px solid var(--secondary);
-            padding: 15px;
-            margin-top: 15px;
-            text-align: left;
+        header {
+            background: #2c3e50;
+            color: white;
             width: 100%;
-            border-radius: 4px;
-        }
-
-        .sutra-title { color: var(--secondary); font-weight: bold; font-size: 0.9rem; }
-        .sutra-text { font-style: italic; color: #555; margin-top: 5px; }
-        .desc-text { margin-top: 15px; line-height: 1.6; color: #333; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        footer {
+            padding: 1rem;
             text-align: center;
-            margin-top: 40px;
-            color: #999;
-            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 1.5rem; }
+        p.subtitle { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.8; }
+
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* --- Left Side: Anatomy Visual --- */
+        .visual-panel {
+            flex: 1;
+            min-width: 300px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        svg {
+            max-height: 400px;
+            width: 100%;
+        }
+
+        /* Default SVG Styles */
+        .organ { fill: #e0e0e0; stroke: #95a5a6; stroke-width: 1.5; transition: fill 0.3s ease; }
+        .organ-text { font-size: 12px; fill: #7f8c8d; opacity: 0; transition: opacity 0.3s; pointer-events: none;}
+        
+        /* Active State */
+        .organ.active { fill: var(--primary); stroke: #922b21; filter: drop-shadow(0 0 5px rgba(192, 57, 43, 0.5)); }
+        .organ.active + .organ-text, .organ:hover + .organ-text { opacity: 1; fill: var(--primary); font-weight: bold; }
+
+        /* --- Right Side: Controls & Info --- */
+        .control-panel {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .letter-grid {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .grid-section h3 { margin-top: 0; font-size: 1rem; color: #7f8c8d; border-bottom: 2px solid #ecf0f1; padding-bottom: 5px;}
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 8px 0;
+            font-size: 1.1rem;
+            border: 1px solid #bdc3c7;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Noto Sans Tamil', sans-serif;
+        }
+
+        button:hover { background-color: #ecf0f1; transform: translateY(-2px); }
+        button.selected { background-color: #2c3e50; color: white; border-color: #2c3e50; }
+
+        .info-card {
+            background: white;
+            border-left: 5px solid var(--primary);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            min-height: 150px;
+        }
+
+        .info-card h2 { margin-top: 0; color: var(--primary); }
+        .sutra-ref { font-size: 0.8rem; color: #7f8c8d; margin-bottom: 10px; display: block; }
+        .action-box { background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; color: #856404; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
-<div class="main-wrapper">
-    <header>
-        <h1>தொல்காப்பியம் AI</h1>
-        <p>பழந்தமிழ் இலக்கணச் சரிபார்ப்புக் கருவி</p>
-    </header>
+<header>
+    <h1>தொல்காப்பியம் - பிறப்பியல்</h1>
+    <p class="subtitle">எழுத்துக்கள் உடலில் எங்குப் பிறக்கின்றன என்பதை அறிக</p>
+</header>
 
-    <div class="card" style="padding:0;">
-        <div class="tab-nav">
-            <button onclick="openTab('grammar')" class="tab-btn active" id="btn-grammar">இலக்கணத் திருத்தி</button>
-            <button onclick="openTab('pronunciation')" class="tab-btn" id="btn-pronunciation">உச்சரிப்புப் பயிற்சியாளர்</button>
+<div class="main-container">
+
+    <div class="visual-panel">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100,380 L100,300 C80,300 60,250 80,150 C90,80 140,20 200,20 C260,20 280,80 280,150 L280,250" fill="none" stroke="#bdc3c7" stroke-width="2"/>
+            
+            <path id="throat" class="organ" d="M130,380 L130,280 C130,280 170,280 170,280 L170,380 Z" />
+            <text x="180" y="350" class="organ-text">மிடறு (Throat)</text>
+
+            <path id="nose" class="organ" d="M230,120 C260,130 270,160 250,170 C240,175 220,160 210,160" fill="none"/>
+            <text x="250" y="110" class="organ-text">மூக்கு (Nose)</text>
+
+            <path id="hard_palate" class="organ" d="M190,165 C200,160 220,165 230,175" fill="none"/>
+            <text x="180" y="150" class="organ-text">அண்ணம் (Hard Palate)</text>
+            
+            <path id="soft_palate" class="organ" d="M160,180 C170,170 180,165 190,165" fill="none"/>
+            <text x="120" y="180" class="organ-text">மெல் அண்ணம் (Soft Palate)</text>
+
+            <rect id="upper_teeth" class="organ" x="230" y="175" width="10" height="15" rx="2" />
+            <text x="250" y="185" class="organ-text">பல் (Teeth)</text>
+
+            <path id="lips" class="organ" d="M240,180 Q260,190 240,200 Q250,210 240,220" fill="none" stroke-width="4"/>
+            <text x="260" y="200" class="organ-text">இதழ் (Lips)</text>
+
+            <path id="root_tongue" class="organ" d="M160,250 C160,220 170,200 180,200" fill="none" stroke-width="4"/>
+            <text x="130" y="240" class="organ-text">நா முதல் (Tongue Root)</text>
+            
+            <path id="middle_tongue" class="organ" d="M180,200 C190,200 200,200 210,210" fill="none" stroke-width="4"/>
+            <text x="180" y="220" class="organ-text">நா இடை (Tongue Mid)</text>
+
+            <path id="tip_tongue" class="organ" d="M210,210 C220,215 230,210 235,195" fill="none" stroke-width="4"/>
+            <text x="230" y="230" class="organ-text">நா நுனி (Tongue Tip)</text>
+
+        </svg>
+    </div>
+
+    <div class="control-panel">
+        
+        <div id="infoBox" class="info-card">
+            <h2>ஒன்றைத் தேர்வு செய்க</h2>
+            <p>கீழே உள்ள எழுத்துக்களைத் தொட்டு, அவை எங்குப் பிறக்கின்றன என்பதை அறியலாம்.</p>
         </div>
 
-        <div style="padding: 30px;">
-            <div id="grammar" class="content-section">
-                <div class="input-section">
-                    <input type="text" id="wordInput" placeholder="தமிழ்ச் சொல்லை உள்ளிடுக (எ.கா: கக்கை, வுட்கை)...">
-                    <button onclick="analyzeWord()" class="action-btn">சோதிக்கவும்</button>
-                </div>
-
-                <div id="resultBox" class="result-container">
-                    <div id="statusBadge" class="status-badge"></div>
-                    <ul id="proofList" class="proof-list"></ul>
-                </div>
-            </div>
-
-            <div id="pronunciation" class="content-section" style="display:none;">
-                <div class="input-section" style="flex-direction: column;">
-                    <label style="font-weight:bold; color:var(--secondary); margin-bottom:10px;">கடினமான ஒலியைத் தேர்ந்தெடுக்கவும்:</label>
-                    <select id="phonemeSelect" onchange="loadPronunciation()" style="padding:15px; font-size:16px; border-radius:8px; border:2px solid #e0e0e0;">
-                        <option value="">-- ஒலியைத் தேர்ந்தெடுக்கவும் --</option>
-                        <option value="zh">ழகரம் (ழ்) - Zh</option>
-                        <option value="L">ளகரம் (ள்) - L</option>
-                        <option value="R">றகரம் (ற்) - R</option>
-                        <option value="n_group">ணகர / னகர வேறுபாடு</option>
-                    </select>
-                </div>
-
-                <div id="tutorBox" class="result-container" style="text-align:center;">
+        <div class="letter-grid">
+            <div class="grid-section">
+                <h3>உயிர் எழுத்துக்கள் (Vowels)</h3>
+                <div class="buttons" id="uyirButtons">
                     </div>
+            </div>
+            <div class="grid-section">
+                <h3>மெய் எழுத்துக்கள் (Consonants)</h3>
+                <div class="buttons" id="meiButtons">
+                     </div>
             </div>
         </div>
     </div>
-
-    <footer>
-        &copy; 2025 Tholkappiyam AI Research | Developed for RDI Scheme
-    </footer>
 </div>
 
-<script src="rules/mozhimuthal.js"></script>
-<script src="rules/mozhiyiruthi.js"></script>
-<script src="rules/meimayakkam.js"></script>
-<script src="rules/pirappiyal.js"></script>
+<script type="module">
+    // Import rules from the external file
+    import { pirappiyalRules, getBirthDetails } from './rules/pirappiyal.js';
 
-<script>
-    // --- TAB SWITCHING LOGIC ---
-    function openTab(tabName) {
-        // Hide all contents
-        document.getElementById('grammar').style.display = 'none';
-        document.getElementById('pronunciation').style.display = 'none';
-        
-        // Remove active class from buttons
-        document.getElementById('btn-grammar').classList.remove('active');
-        document.getElementById('btn-pronunciation').classList.remove('active');
+    const uyirChars = ["அ", "ஆ", "இ", "ஈ", "உ", "ஊ", "எ", "ஏ", "ஐ", "ஒ", "ஓ", "ஔ"];
+    const meiChars = ["க்", "ங்", "ச்", "ஞ்", "ட்", "ண்", "த்", "ந்", "ப்", "ம்", "ய்", "ர்", "ல்", "வ்", "ழ்", "ள்", "ற்", "ன்"];
 
-        // Show specific tab and activate button
-        document.getElementById(tabName).style.display = 'block';
-        document.getElementById('btn-' + tabName).classList.add('active');
-    }
+    const infoBox = document.getElementById('infoBox');
+    const uyirContainer = document.getElementById('uyirButtons');
+    const meiContainer = document.getElementById('meiButtons');
+    const allOrgans = document.querySelectorAll('.organ');
 
-    // --- MAIN GRAMMAR CHECKER LOGIC ---
-    function analyzeWord() {
-        const word = document.getElementById('wordInput').value.trim();
-        const resultBox = document.getElementById('resultBox');
-        const statusBadge = document.getElementById('statusBadge');
-        const proofList = document.getElementById('proofList');
-
-        if (!word) return;
-
-        // Clear previous results
-        proofList.innerHTML = '';
-        resultBox.style.display = 'block';
-
-        let isOverallValid = true;
-        let proofs = [];
-
-        // 1. மொழிமுதல் சோதனை
-        let startCheck = MozhimuthalRules.check(word);
-        if (!startCheck.title) startCheck.title = "மொழிமுதல் ஆய்வு";
-        if (!startCheck.description) startCheck.description = startCheck.reason || (startCheck.isValid ? "விதிக்கு உட்பட்டது." : "விதிமீறல் கண்டறியப்பட்டது.");
-        proofs.push(startCheck);
-        if (!startCheck.isValid) isOverallValid = false;
-
-        // 2. மெய்ம்மயக்கச் சோதனை
-        let midCheck = MeimayakkamRules.check(word);
-        if (!midCheck.title) midCheck.title = "மெய்ம்மயக்க ஆய்வு";
-        if (!midCheck.description) midCheck.description = midCheck.reason || (midCheck.isValid ? "மெய்ம்மயக்கங்கள் சரியாக உள்ளன." : "விதிமீறல் கண்டறியப்பட்டது.");
-        proofs.push(midCheck);
-        if (!midCheck.isValid) isOverallValid = false;
-
-        // 3. மொழியிறுதி சோதனை
-        let endCheck = MozhiyiruthiRules.check(word);
-        if (!endCheck.title) endCheck.title = "மொழியிறுதி ஆய்வு";
-        if (!endCheck.description) endCheck.description = endCheck.reason || (endCheck.isValid ? "விதிக்கு உட்பட்டது." : "விதிமீறல் கண்டறியப்பட்டது.");
-        proofs.push(endCheck);
-        if (!endCheck.isValid) isOverallValid = false;
-
-        // Update UI Badge
-        if (isOverallValid) {
-            statusBadge.className = 'status-badge status-valid';
-            statusBadge.innerText = '✅ சரியான சொல் (Valid)';
-        } else {
-            statusBadge.className = 'status-badge status-invalid';
-            statusBadge.innerText = '❌ பிழையான சொல் (Invalid)';
-        }
-
-        // Generate Detailed Proof List
-        proofs.forEach(proof => {
-            const li = document.createElement('li');
-            li.className = 'proof-item';
-            
-            const icon = proof.isValid ? '✓' : '✖';
-            const iconClass = proof.isValid ? 'icon-check' : 'icon-cross';
-            
-            li.innerHTML = `
-                <div class="proof-icon ${iconClass}">${icon}</div>
-                <div class="proof-content">
-                    <h4>${proof.title}</h4>
-                    <p>${proof.description}</p>
-                </div>
-            `;
-            proofList.appendChild(li);
+    // 1. Initialize Buttons
+    function createButtons(chars, container) {
+        chars.forEach(char => {
+            const btn = document.createElement('button');
+            btn.textContent = char;
+            btn.onclick = () => handleSelection(char, btn);
+            container.appendChild(btn);
         });
     }
 
-    // --- PRONUNCIATION TUTOR LOGIC ---
-    function loadPronunciation() {
-        const key = document.getElementById('phonemeSelect').value;
-        const box = document.getElementById('tutorBox');
+    createButtons(uyirChars, uyirContainer);
+    createButtons(meiChars, meiContainer);
+
+    // 2. Handle Logic
+    function handleSelection(char, btnElement) {
+        // UI Reset
+        document.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+        btnElement.classList.add('selected');
         
-        if (!key || !PirappiyalData[key]) {
-            box.style.display = 'none';
-            return;
+        // Reset Anatomy
+        allOrgans.forEach(org => org.classList.remove('active'));
+
+        // Get Data
+        const rule = getBirthDetails(char);
+
+        if (rule) {
+            updateInfoPanel(char, rule);
+            highlightOrgans(rule.organs);
+        } else {
+            infoBox.innerHTML = `<h2>${char}</h2><p>இதற்கான விதிமுறைகள் ஏற்றப்படவில்லை.</p>`;
         }
+    }
 
-        const data = PirappiyalData[key];
-        box.style.display = 'block';
+    // 3. Highlight Anatomy
+    function highlightOrgans(organsList) {
+        if(!organsList) return;
 
-        box.innerHTML = `
-            <div class="pronunciation-card">
-                <div class="letter-display">${data.char}</div>
-                <div class="diagram-container">
-                    ${data.svg}
-                </div>
-                <h3>${data.name}</h3>
-                <div class="desc-text">${data.desc}</div>
-                
-                <div class="sutra-box">
-                    <div class="sutra-title">தொல்காப்பிய விதி (AI Logic):</div>
-                    <div class="sutra-text">"${data.sutra}"</div>
-                </div>
+        // Map JS organ names to SVG IDs
+        // Note: JS uses logical names, SVG uses IDs. 
+        // We need a simple mapping or ensure IDs match logic.
+        // Based on the SVG I drew above, here is how we map complex JSON names to Simple SVG IDs:
+        
+        const map = {
+            'throat': ['throat'],
+            'chest': ['throat'], // Simplified
+            'nose': ['nose'],
+            'lips': ['lips'],
+            'upper_lip': ['lips'],
+            'lower_lip': ['lips'],
+            'teeth': ['upper_teeth'],
+            'upper_teeth': ['upper_teeth'],
+            'upper_teeth_base': ['upper_teeth'],
+            'mouth': ['lips', 'upper_teeth'], // General open mouth
+            'hard_palate': ['hard_palate'],
+            'soft_palate': ['soft_palate'],
+            'middle_palate': ['hard_palate'],
+            'root_tongue': ['root_tongue'],
+            'middle_tongue': ['middle_tongue'],
+            'tip_tongue': ['tip_tongue'],
+            'tongue_sides': ['middle_tongue', 'tip_tongue'],
+            'alveolar_ridge': ['hard_palate'], // Roughly near hard palate
+            'head': ['hard_palate'] // Resonating head chamber
+        };
+
+        organsList.forEach(organName => {
+            const targetIds = map[organName] || [organName]; // Fallback to direct ID
+            targetIds.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('active');
+            });
+        });
+    }
+
+    // 4. Update Text Info
+    function updateInfoPanel(char, rule) {
+        infoBox.innerHTML = `
+            <h2>${char}</h2>
+            <span class="sutra-ref">நூற்பா எண்: ${rule.sutra_number}</span>
+            <p>${rule.explanation}</p>
+            <div class="action-box">
+                செயல்: ${rule.action}
             </div>
         `;
     }
+
 </script>
 
 </body>
