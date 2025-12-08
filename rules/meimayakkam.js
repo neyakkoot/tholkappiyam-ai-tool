@@ -1,104 +1,159 @@
 const MeimayakkamRules = {
     check: function(word) {
         
-        // பொது விதி: ஙகர உயிர்மெய் இடையில் வரக்கூடாது
-        if (/.[ஙஙாஙிஙீஙுஙூஙெஙேஙைஙொஙோஙௌ]/.test(word)) {
-            return {
-                title: "மெய்ம்மயக்க ஆய்வு",
-                isValid: false,
-                description: "பிழை: 'ங்' (ஒற்று) தவிர்த்த பிற ஙகர உயிர்மெய்கள் சொல்லின் இடையில் வருவது தமிழ் மரபு அன்று."
-            };
-        }
-
+        // மெய்யெழுத்துகளைக் கண்டறியும் Regex
         const meiRegex = /[க்ங்ச்ஞ்ஜ்ட்ண்த்ந்ப்ம்ய்ர்ல்வ்ழ்ள்ற்ன்]/g;
         let match;
 
         while ((match = meiRegex.exec(word)) !== null) {
-            const mei = match[0];
+            const mei = match[0]; // தற்போதைய மெய் (எ.கா: 'ட்')
             const index = match.index;
+            
+            // சொல்லின் இறுதியில் இருந்தால் பிரச்சனை இல்லை
             if (index + 1 >= word.length) continue;
-            const nextChar = word[index + 1];
+
+            const nextChar = word[index + 1]; 
+            // அடுத்த எழுத்தின் அடிப்படை மெய்யை (Root Consonant) எடுக்கிறோம்.
             const nextBase = getBaseConsonant(nextChar);
 
-            if (!nextBase) continue;
+            if (!nextBase) continue; // அடுத்தது உயிரெழுத்து என்றால் விட்டுவிடு
 
             let isValidCluster = false;
             let ruleDescription = "";
 
+            // பைத்தான் நிரலில் உள்ள துல்லியமான விதிகளின்படி சரிபார்ப்பு
             switch (mei) {
+                
+                // -----------------------------------------------------
+                // விதி 1: ட், ற், ல், ள் + க, ச, ப
+                // (Python Rule 1: ட் ற் ல் ள் + க ச ப)
+                // -----------------------------------------------------
                 case 'ட்': 
+                    // க, ச, ப மற்றும் தன் வர்க்கம் (ட)
                     isValidCluster = ['க்', 'ச்', 'ப்', 'ட்'].includes(nextBase);
-                    ruleDescription = "'ட்' ஒற்றின் பின் க, ச, ப மற்றும் ட மட்டுமே மயங்கும்.";
+                    ruleDescription = "விதி 1: 'ட்' ஒற்றின் பின் க, ச, ப மற்றும் ட மட்டுமே மயங்கும்.";
                     break;
+
                 case 'ற்': 
+                    // க, ச, ப மற்றும் தன் வர்க்கம் (ற)
                     isValidCluster = ['க்', 'ச்', 'ப்', 'ற்'].includes(nextBase);
-                    ruleDescription = "'ற்' ஒற்றின் பின் க, ச, ப மற்றும் ற மட்டுமே மயங்கும்.";
+                    ruleDescription = "விதி 1: 'ற்' ஒற்றின் பின் க, ச, ப மற்றும் ற மட்டுமே மயங்கும்.";
                     break;
+
+                // -----------------------------------------------------
+                // விதி 1 & 2 ஒருங்கிணைப்பு: ல், ள்
+                // (Python Rule 1: க, ச, ப | Rule 2: ய, வ)
+                // -----------------------------------------------------
                 case 'ல்': 
+                    // க, ச, ப (Rule 1) + ய, வ (Rule 2) + ல (Gemination)
                     isValidCluster = ['க்', 'ச்', 'ப்', 'ய்', 'வ்', 'ல்'].includes(nextBase);
-                    ruleDescription = "'ல்' ஒற்றின் பின் க, ச, ப, ய, வ மற்றும் ல மட்டுமே மயங்கும்.";
+                    ruleDescription = "விதி 1 & 2: 'ல்' ஒற்றின் பின் க, ச, ப, ய, வ மற்றும் ல மயங்கும்.";
                     break;
+
                 case 'ள்': 
+                    // க, ச, ப (Rule 1) + ய, வ (Rule 2) + ள (Gemination)
                     isValidCluster = ['க்', 'ச்', 'ப்', 'ய்', 'வ்', 'ள்'].includes(nextBase);
-                    ruleDescription = "'ள்' ஒற்றின் பின் க, ச, ப, ய, வ மற்றும் ள மட்டுமே மயங்கும்.";
+                    ruleDescription = "விதி 1 & 2: 'ள்' ஒற்றின் பின் க, ச, ப, ய, வ மற்றும் ள மயங்கும்.";
                     break;
+
+                // -----------------------------------------------------
+                // விதி 3: மெல்லினம் + தத்தமிசைகள் (Homorganic)
+                // (Python Rule 3: ங்->க், ஞ்->ச், ண்->ட், ந்->த், ம்->ப், ன்->ற்)
+                // -----------------------------------------------------
                 case 'ங்': 
                     isValidCluster = ['க்', 'ங்'].includes(nextBase);
-                    ruleDescription = "'ங்' ஒற்றின் பின் அதன் இனமான 'க' மட்டுமே மயங்கும்.";
+                    ruleDescription = "விதி 3: 'ங்' ஒற்றின் பின் அதன் இனமான 'க' மட்டுமே மயங்கும்.";
                     break;
-                case 'ஞ்': 
-                    isValidCluster = ['ச்', 'ஞ்', 'ய்'].includes(nextBase);
-                    ruleDescription = "'ஞ்' ஒற்றின் பின் ச, ஞ, ய மட்டுமே மயங்கும்.";
-                    break;
+
                 case 'ண்': 
-                    isValidCluster = ['ட்', 'ண்', 'க்', 'ச்', 'ப்', 'ம்', 'ய', 'வ'].includes(nextBase);
-                    ruleDescription = "'ண்' ஒற்றின் பின் ட, ண மற்றும் வல்லினம் மயங்கும்.";
+                    isValidCluster = ['ட்', 'ண்'].includes(nextBase);
+                    ruleDescription = "விதி 3: 'ண்' ஒற்றின் பின் அதன் இனமான 'ட' மற்றும் 'ண' மட்டுமே மயங்கும்.";
                     break;
-                case 'ந்': 
-                    isValidCluster = ['த்', 'ந்', 'ய்'].includes(nextBase);
-                    ruleDescription = "'ந்' ஒற்றின் பின் த, ந, ய மட்டுமே மயங்கும்.";
-                    break;
-                case 'ம்': 
-                    isValidCluster = ['ப்', 'ம்', 'ய்', 'வ்', 'க்', 'ச்', 'த்'].includes(nextBase);
-                    ruleDescription = "'ம்' ஒற்றின் பின் ப, ம, ய, வ போன்றவை மயங்கும்.";
-                    break;
+
                 case 'ன்': 
-                    isValidCluster = ['ற்', 'ன்', 'க்', 'ச்', 'ப்', 'ம்', 'ய', 'வ'].includes(nextBase);
-                    ruleDescription = "'ன்' ஒற்றின் பின் ற, ன மற்றும் வல்லினம் மயங்கும்.";
+                    isValidCluster = ['ற்', 'ன்'].includes(nextBase);
+                    ruleDescription = "விதி 3: 'ன்' ஒற்றின் பின் அதன் இனமான 'ற' மற்றும் 'ன' மட்டுமே மயங்கும். ('ர' வராது).";
                     break;
+
+                // -----------------------------------------------------
+                // விதி 3 & 4 ஒருங்கிணைப்பு: ஞ், ந்
+                // (Python Rule 3: இனம் | Rule 4: ய)
+                // -----------------------------------------------------
+                case 'ஞ்': 
+                    // ச (Rule 3) + ய (Rule 4) + ஞ (Gemination)
+                    isValidCluster = ['ச்', 'ஞ்', 'ய்'].includes(nextBase);
+                    ruleDescription = "விதி 3 & 4: 'ஞ்' ஒற்றின் பின் ச, ஞ, ய மட்டுமே மயங்கும்.";
+                    break;
+
+                case 'ந்': 
+                    // த (Rule 3) + ய (Rule 4) + ந (Gemination)
+                    isValidCluster = ['த்', 'ந்', 'ய்'].includes(nextBase);
+                    ruleDescription = "விதி 3 & 4: 'ந்' ஒற்றின் பின் த, ந, ய மட்டுமே மயங்கும்.";
+                    break;
+
+                // -----------------------------------------------------
+                // விதி 3, 4, 5 ஒருங்கிணைப்பு: ம்
+                // (Python Rule 3: ப | Rule 4: ய | Rule 5: வ)
+                // -----------------------------------------------------
+                case 'ம்': 
+                    // ப (Rule 3) + ய (Rule 4) + வ (Rule 5) + ம (Gemination)
+                    isValidCluster = ['ப்', 'ம்', 'ய்', 'வ்'].includes(nextBase);
+                    ruleDescription = "விதி 3, 4 & 5: 'ம்' ஒற்றின் பின் ப, ம, ய, வ மட்டுமே மயங்கும்.";
+                    break;
+
+                // -----------------------------------------------------
+                // விதி 4: வ்
+                // (Python Rule 4: வ் + ய)
+                // -----------------------------------------------------
                 case 'வ்': 
+                    // ய (Rule 4) + வ (Gemination)
                     isValidCluster = ['ய்', 'வ்'].includes(nextBase);
-                    ruleDescription = "'வ்' ஒற்றின் பின் ய மற்றும் வ மட்டுமே மயங்கும்.";
+                    ruleDescription = "விதி 4: 'வ்' ஒற்றின் பின் ய மற்றும் வ மட்டுமே மயங்கும்.";
                     break;
+
+                // -----------------------------------------------------
+                // விதி 6: ய், ர், ழ் + (க ச த ப ஞ ந ம ய வ ங)
+                // (Python Rule 6: List of 10 letters)
+                // -----------------------------------------------------
                 case 'ய்':
                     isValidCluster = ['க்','ச்','த்','ப்','ஞ்','ந்','ம்','ய்','வ்','ங்'].includes(nextBase);
-                    ruleDescription = "'ய்' ஒற்றின் பின் க,ச,த,ப, ங,ஞ,ந,ம, ய,வ வரலாம்.";
+                    ruleDescription = "விதி 6: 'ய்' ஒற்றின் பின் க,ச,த,ப, ங,ஞ,ந,ம, ய,வ, ங மயங்கும்.";
                     break;
+
                 case 'ர்':
+                    // விதி 7: ர, ழ அலங்கடை (No gemination - Python Rule 7 Logic)
                     if (nextBase === 'ர்') {
                         isValidCluster = false;
-                        ruleDescription = "'ர்' (r) மெய் தன்னோடு தான் மயங்காது.";
+                        ruleDescription = "விதி 7: 'ர்' (r) மெய் தன்னோடு தான் மயங்காது (இரட்டிப்பு ஆகாது).";
                     } else {
+                        // Rule 6 check
                         isValidCluster = ['க்','ச்','த்','ப்','ஞ்','ந்','ம்','ய்','வ்','ங்'].includes(nextBase);
-                        ruleDescription = "'ர்' ஒற்றின் பின் க,ச,த,ப, ங,ஞ,ந,ம, ய,வ வரலாம்.";
+                        ruleDescription = "விதி 6: 'ர்' ஒற்றின் பின் க,ச,த,ப, ங,ஞ,ந,ம, ய,வ மயங்கும்.";
                     }
                     break;
+
                 case 'ழ்':
+                    // விதி 7: ர, ழ அலங்கடை (No gemination - Python Rule 7 Logic)
                     if (nextBase === 'ழ்') {
                         isValidCluster = false;
-                        ruleDescription = "'ழ்' (zh) மெய் தன்னோடு தான் மயங்காது.";
+                        ruleDescription = "விதி 7: 'ழ்' (zh) மெய் தன்னோடு தான் மயங்காது (இரட்டிப்பு ஆகாது).";
                     } else {
+                        // Rule 6 check
                         isValidCluster = ['க்','ச்','த்','ப்','ஞ்','ந்','ம்','ய்','வ்','ங்'].includes(nextBase);
-                        ruleDescription = "'ழ்' ஒற்றின் பின் க,ச,த,ப, ங,ஞ,ந,ம, ய,வ வரலாம்.";
+                        ruleDescription = "விதி 6: 'ழ்' ஒற்றின் பின் க,ச,த,ப, ங,ஞ,ந,ம, ய,வ மயங்கும்.";
                     }
                     break;
-                case 'க்': isValidCluster = (nextBase === 'க்'); ruleDescription = "'க்' ஒற்றின் பின் 'க' வர்க்கம் மட்டுமே வரும்."; break;
-                case 'ச்': isValidCluster = (nextBase === 'ச்'); ruleDescription = "'ச்' ஒற்றின் பின் 'ச' வர்க்கம் மட்டுமே வரும்."; break;
-                case 'த்': isValidCluster = (nextBase === 'த்'); ruleDescription = "'த்' ஒற்றின் பின் 'த' வர்க்கம் மட்டுமே வரும்."; break;
-                case 'ப்': isValidCluster = (nextBase === 'ப்'); ruleDescription = "'ப்' ஒற்றின் பின் 'ப' வர்க்கம் மட்டுமே வரும்."; break;
+                
+                // -----------------------------------------------------
+                // வல்லினம்: க், ச், த், ப் (தம்மொடு தாம் மட்டும்)
+                // -----------------------------------------------------
+                case 'க்': isValidCluster = (nextBase === 'க்'); ruleDescription = "வல்லினம்: 'க்' ஒற்றின் பின் 'க' வர்க்கம் மட்டுமே வரும்."; break;
+                case 'ச்': isValidCluster = (nextBase === 'ச்'); ruleDescription = "வல்லினம்: 'ச்' ஒற்றின் பின் 'ச' வர்க்கம் மட்டுமே வரும்."; break;
+                case 'த்': isValidCluster = (nextBase === 'த்'); ruleDescription = "வல்லினம்: 'த்' ஒற்றின் பின் 'த' வர்க்கம் மட்டுமே வரும்."; break;
+                case 'ப்': isValidCluster = (nextBase === 'ப்'); ruleDescription = "வல்லினம்: 'ப்' ஒற்றின் பின் 'ப' வர்க்கம் மட்டுமே வரும்."; break;
 
                 default: 
-                    isValidCluster = true; 
+                    isValidCluster = true; // அறியாத மெய்களுக்கு அனுமதி
             }
 
             if (!isValidCluster) {
@@ -110,16 +165,18 @@ const MeimayakkamRules = {
             }
         }
 
-        // வெற்றிச் செய்தி (இங்குதான் முன்பு undefined வந்தது)
         return {
             title: "மெய்ம்மயக்க ஆய்வு",
             isValid: true,
-            description: "சரி: சொல்லில் உள்ள மெய்ம்மயக்கங்கள் (Clusters) அனைத்தும் தொல்காப்பிய விதிகளுக்கு உட்பட்டுள்ளன."
+            description: "சரி: சொல்லில் உள்ள மெய்ம்மயக்கங்கள் (Clusters) அனைத்தும் தொல்காப்பிய விதிகளுக்கு (நூன்மரபு/மொழிமரபு) உட்பட்டுள்ளன."
         };
     }
 };
 
-// Helper Function
+// ---------------------------------------------------------
+// Helper Function: உயிர்மெய்யிலிருந்து மெய்யைப் பிரித்தறிதல்
+// (Python's tamil.utf8.splitMeiUyir logic adapted)
+// ---------------------------------------------------------
 function getBaseConsonant(char) {
     const mapping = {
         'க': 'க்', 'கா': 'க்', 'கி': 'க்', 'கீ': 'க்', 'கு': 'க்', 'கூ': 'க்', 'கெ': 'க்', 'கே': 'க்', 'கை': 'க்', 'கொ': 'க்', 'கோ': 'க்', 'கௌ': 'க்', 'க்': 'க்',
